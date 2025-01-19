@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gestão de Estoque</title>
+  <script src="https://apis.google.com/js/api.js"></script>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header>
+    <div class="menu">
+      <button id="menuToggle">☰</button>
+      <div id="menuLinks" class="hidden">
+        <a href="https://gabriel-afm.github.io/saida/" target="_blank">Saída</a>
+        <a href="https://gabriel-afm.github.io/saida/" target="_blank">Saída 2</a>
+        <a href="https://gabriel-afm.github.io/minha-ges-valid/" target="_blank">Minha Ges Valid</a>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <h1>Gestão de Estoque</h1>
+    <div class="form-container">
+      <input type="text" id="productInput" placeholder="Nome do Produto">
+      <input type="number" id="quantityInput" placeholder="Quantidade">
+      <button id="addButton">Adicionar</button>
+      <button id="checkErrorButton">Verificar Erros</button>
+      <button id="clearButton">Limpar</button>
+    </div>
+    <div class="table-container">
+      <table>
+        <thead>
+          <tr>
+            <th>Produto</th>
+            <th>Quantidade</th>
+            <th>Ação</th>
+          </tr>
+        </thead>
+        <tbody id="recordTable"></tbody>
+      </table>
+    </div>
+  </main>
+
+  <footer>
+    <p>© 2025 Gabriel AFM</p>
+  </footer>
+
+  <script src="scripts.js"></script>
+</body>
+</html>

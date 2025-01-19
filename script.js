@@ -1,10 +1,10 @@
-// API Configurations
+// Configurações da API
 const CLIENT_ID = "921366091275-m476i96govuv9ksaqnr44b6i393bjove.apps.googleusercontent.com";
 const API_KEY = "AIzaSyCKzDUOinstTX4L_tHBaI9jOk0Q8e7c5MM";
 const SHEET_ID = "1VkqAFmpUOeljbin0DEKOrD5RJG8A91MEj77eSx92eHg";
 const SCOPES = "https://www.googleapis.com/auth/spreadsheets";
 
-// Initialize API
+// Inicializa a API
 function initClient() {
   gapi.load("client:auth2", () => {
     gapi.client.init({
@@ -19,54 +19,61 @@ function initClient() {
 document.addEventListener("DOMContentLoaded", () => {
   initClient();
 
-  const addButton = document.getElementById("addButton");
-  const checkErrorButton = document.getElementById("checkErrorButton");
-  const clearButton = document.getElementById("clearButton");
+  const entryButton = document.getElementById("entryButton");
+  const exitButton = document.getElementById("exitButton");
   const menuToggle = document.getElementById("menuToggle");
   const menuLinks = document.getElementById("menuLinks");
 
   let records = [];
 
-  addButton.addEventListener("click", () => {
-    const product = document.getElementById("productInput").value;
-    const quantity = document.getElementById("quantityInput").value;
-
-    if (!product || !quantity) {
-      alert("Preencha todos os campos!");
-      return;
-    }
-
-    records.push({ product, quantity });
-    updateTable();
-
-    // Add data to Google Sheets
-    gapi.client.sheets.spreadsheets.values.append({
-      spreadsheetId: SHEET_ID,
-      range: "A:B",
-      valueInputOption: "RAW",
-      resource: {
-        values: [[product, quantity]],
-      },
-    }).then((response) => {
-      alert("Dados adicionados com sucesso!");
-    }).catch((error) => {
-      console.error("Erro ao salvar os dados:", error);
-      alert("Erro ao salvar os dados.");
-    });
-  });
-
-  checkErrorButton.addEventListener("click", () => {
-    window.open(`https://docs.google.com/spreadsheets/d/${SHEET_ID}/edit`, "_blank");
-  });
-
-  clearButton.addEventListener("click", () => {
-    records = [];
-    updateTable();
-  });
+  entryButton.addEventListener("click", () => handleAction("entrada"));
+  exitButton.addEventListener("click", () => handleAction("saida"));
 
   menuToggle.addEventListener("click", () => {
     menuLinks.classList.toggle("hidden");
   });
+
+  function handleAction(action) {
+    const product = document.getElementById("productSelect").value;
+    const quantity = parseFloat(document.getElementById("quantityInput").value);
+
+    if (!product || isNaN(quantity) || quantity <= 0) {
+      alert("Preencha todos os campos corretamente!");
+      return;
+    }
+
+    // Adiciona ao registro local
+    const recordIndex = records.findIndex((r) => r.product === product);
+    if (recordIndex === -1) {
+      records.push({ product, entrada: action === "entrada" ? quantity : 0, saida: action === "saida" ? quantity : 0 });
+    } else {
+      if (action === "entrada") {
+        records[recordIndex].entrada += quantity;
+      } else {
+        records[recordIndex].saida += quantity;
+      }
+    }
+    updateTable();
+
+    // Atualiza a planilha do Google Sheets
+    const column = action === "entrada" ? "E" : "F";
+    const range = `${column}:${column}`;
+    const value = [[product], [quantity]];
+
+    gapi.client.sheets.spreadsheets.values.append({
+      spreadsheetId: SHEET_ID,
+      range: range,
+      valueInputOption: "RAW",
+      resource: {
+        values: [[quantity]],
+      },
+    }).then(() => {
+      alert("Dados atualizados com sucesso!");
+    }).catch((error) => {
+      console.error("Erro ao atualizar os dados:", error);
+      alert("Erro ao atualizar os dados.");
+    });
+  }
 
   function updateTable() {
     const tableBody = document.getElementById("recordTable");
@@ -76,13 +83,9 @@ document.addEventListener("DOMContentLoaded", () => {
       const row = document.createElement("tr");
       row.innerHTML = `
         <td>${record.product}</td>
-        <td>${record.quantity}</td>
-        <td><button class="delete-btn">Excluir</button></td>
+        <td>${record.entrada}</td>
+        <td>${record.saida}</td>
       `;
-      row.querySelector(".delete-btn").addEventListener("click", () => {
-        records = records.filter((r) => r !== record);
-        updateTable();
-      });
       tableBody.appendChild(row);
     });
   }

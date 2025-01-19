@@ -21,20 +21,28 @@
 
   <main>
     <h1>Gestão de Estoque</h1>
+
+    <!-- Formulário para Entrada e Saída -->
     <div class="form-container">
-      <input type="text" id="productInput" placeholder="Nome do Produto">
+      <select id="productSelect">
+        <option value="ABCD">ABCD</option>
+        <option value="EFGH">EFGH</option>
+        <option value="IJKL">IJKL</option>
+        <!-- Adicione mais produtos aqui -->
+      </select>
       <input type="number" id="quantityInput" placeholder="Quantidade">
-      <button id="addButton">Adicionar</button>
-      <button id="checkErrorButton">Verificar Erros</button>
-      <button id="clearButton">Limpar</button>
+      <button id="entryButton">Entrada</button>
+      <button id="exitButton">Saída</button>
     </div>
+
+    <!-- Tabela de Registros -->
     <div class="table-container">
       <table>
         <thead>
           <tr>
             <th>Produto</th>
-            <th>Quantidade</th>
-            <th>Ação</th>
+            <th>Entrada</th>
+            <th>Saída</th>
           </tr>
         </thead>
         <tbody id="recordTable"></tbody>
